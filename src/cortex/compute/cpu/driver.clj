@@ -82,7 +82,7 @@
 
 (defn main-thread-cpu-stream
   "Create a cpu stream that will execute everything immediately inline.
-Use with care; the synchonization primitives will just hang with this stream."
+Use with care; the synchronization primitives will just hang with this stream."
   ^CPUStream []
   (->CPUStream (drv/default-device (driver)) nil nil nil))
 

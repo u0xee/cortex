@@ -29,8 +29,8 @@ Logically, a tensor is a simple map of
  :description description}
 ```
 
-The description encodes information such as shape (A vector of dimensions) and strides (a vector of ...strides...).  Each backend promises to obey the
-rules set in the description.  This means that for example an in-place transpose operation looks like:
+The description encodes information such as shape (a vector of dimensions) and strides (a vector of ...strides...).  Each backend promises to obey the
+rules set in the description.  This means, for example, that an in-place transpose operation looks like:
 ```clojure
 (defn transpose
   "Transpose the dimensions.  Returns a new dimensions that will access memory in a transposed order."
@@ -56,10 +56,10 @@ This is one direct benefit of the separation of data from description.
 If we agree that the description describes the precise interpretation
 of the data and we modify the description in accordance to the
 contract then we do not have to change backend code at all in order to
-affect the way the data is interpreted.
+effect the way the data is interpreted.
 
 
-There are a number typical operations that can be implemented in the dimension.clj namespace such as:
+There are a number typical operations that can be implemented in the `dimension.clj` namespace such as:
 
 * in-place-transpose
 * select (choose a subset of dimensions potentially changing the rank of the tensor)
@@ -71,13 +71,13 @@ There are a number typical operations that can be implemented in the dimension.c
 
 
 The second major direct benefit of the combination of the separation
-of data and description plus the buffer offsetting mechanism described
-in the compute document is that it enables algorithms such as:
+of data and description plus the buffer offsetting mechanism, described
+in the compute document, is that it enables algorithms such as:
 
 *  Allocate the base buffer for all parameter and gradient buffers at once and then
    use offsetting and descriptions to assign sub regions and specific
    shapes for each parameter and gradient buffer.  Then your optimization pass needs
-   to optimize exactly 1 buffer as optimization is currently a
+   to optimize exactly one buffer, since optimization is currently a
    linearly independent operation of the gradient, parameters, and the
    optimizer parameters.
    
@@ -93,14 +93,14 @@ in the compute document is that it enables algorithms such as:
 * [cuda](../src/cortex/compute/cuda/tensor_math.clj)
    
    
-### Operation Design (adding new unary/binary/binary operations)
+### Operation Design (adding new unary/binary/ternary operations)
 
 Unary and binary operations obey a principle that they place their
 result into destination buffers and the destination buffer may be
 involved in the operation itself.  When programmed on a GPU this
 requires either a reduction operation or the use of the CAS primitive.
-They are defined for all datatypes but none of the operations allow of
-marshalling as this would explode the space of function signatures
+They are defined for all datatypes, but none of the operations allow
+marshalling, as this would explode the space of function signatures
 needed for all types.
 
 * Unary:  `y = op(a * x)`
@@ -117,7 +117,7 @@ only defined for the datatypes for which CAS is defined; those are 4
 and 8 byte operands only.
 
 
-These are accessible through the tensor unary-op! binary-op! and ternary-op! functions
+These are accessible through the tensor `unary-op!`, `binary-op!`, and `ternary-op!` functions
 respectively.
 
 
@@ -141,14 +141,14 @@ Broadcasting is a way of indexing through multple-operand functions that allows 
 *  Summing rows into a vector. 
 *  Summing columns into a vector.
 
-[Here](https://docs.scipy.org/doc/numpy-1.13.0/user/basics.broadcasting.html) is some good documentation
+[Here](https://docs.scipy.org/doc/numpy-1.13.0/user/basics.broadcasting.html) is some good documentation.
 
 The rules for broadcasting in the tensor system are:
 
 1. 1-extend the shape till all operands (including the destination) are the same length.
 2. For each dimension, record the max dimension among all operands.
 3. While indexing through the specific operand, take the remainder of the dimension index with the specific operands index.
-4. The operation's overall element count is (apply * max-shape).
+4. The operation's overall element count is `(apply * max-shape)`.
 
 * Reference [cpu](../src/cortex/tensor/dimensions.clj#L189) implementation.
 * Reference [cuda](../resources/index_system.h) implementation.

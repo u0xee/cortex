@@ -5,16 +5,16 @@ some level of shared implementation between a cpu, cuda, openCL,
 webworkers, etc. design.  This system is not specific to neural networks
 nor it is specific to doing linear algebra but is rather the basis
 to implement any generic algorithm across a range of environments but
-targetting environments where there is a distinct transfer step between
+targeting environments where there is a distinct transfer step between
 the main computing system (called the host) and some external compute
 system (called the device).  The primitives of this layer are carefully
 chosen to be implementable across a wide range of different 'devices' such
-that a unified codebase and run unmodified in the various potential runtimes
-listed above and this *includes* operations like:
+that a unified codebase can run unmodified in the various potential runtimes
+listed above. This *includes* operations like:
 
 * Offsetting device buffers to create new buffers.  Thus allows efficient implementation
-of pooling algorithms or buffer coalescing where the user desires to create 1 large buffer
-and the create a series of smaller buffers piecemeal later.  Sub-buffers are not distiguishable
+of pooling algorithms or buffer coalescing where the user desires to create one large buffer,
+and then create a series of smaller buffers piecemeal later.  Sub-buffers are not distinguishable
 to the implementations from the original source buffers.
 * Initializing buffers to fixed values.
 * Transfer of data between the host and device.
@@ -22,8 +22,8 @@ to the implementations from the original source buffers.
 * Synchronizing stream execution with either the host system or with another on-device stream.
 
 
-There is a generalized underlying compute layer that works across 6
-primitive datatypes in the JVM - bytes, shorts, ints, longs, floats
+There is a generalized underlying compute layer that works across the 6
+primitive data types in the JVM - bytes, shorts, ints, longs, floats
 and doubles. This compute layer contains the protocols that define an
 interface to a compute driver, either cpu or cuda at this time. This
 interface contains ways to move data from the host architecture to the
@@ -50,9 +50,11 @@ Components of the compute abstraction:
 ```
 
 This layer defines operations you would expect to find on any buffer in a C-based language such as:
+* memset
+* memcpy
+* offsetting
+* upload to device and download from device.
 
-
-memset, memcpy, offsetting, upload to device and download from device.
 Buffers can be offset to produce a new (shorter) buffer with a different base address.
 
 

@@ -1,8 +1,8 @@
 (ns cortex.compute.math
-  "Basic math abstracting that provides a set of mathematical operations on streams an an
+  "Basic math abstracting that provides a set of mathematical operations on streams and an
   aggregate datatype that combines a buffer of data with a description of that data (named a
-  tensor).  These operations are expected to be provided and uniform across drivers and code
-  written to the interfaces in here should be 100% portable across different compute drivers."
+  tensor).  These operations are expected to be provided and uniform across drivers. Code
+  written using these interfaces should be 100% portable across different compute drivers."
   (:require [clojure.core.matrix.protocols :as mp]
             [clojure.core.matrix :as m]
             [clojure.core.matrix.macros :refer [c-for]]
@@ -39,15 +39,15 @@
 
 (defprotocol PMath
   "Base math abstraction.  Note the constants (alpha, beta) must be in the same
-  datatype as the buffers.  The buffers must be device buffers and the matrixes are
+  datatype as the buffers.  The buffers must be device buffers and the matrices are
   assumed to be row major.  Note that this interface expects raw device buffers and
-  *not* DeviceArrays (the multidimension abstraction presented below).
+  *not* DeviceArrays (the multi-dimension abstraction presented below).
   gemm: C = alpha * ((trans-a? A) * (trans-b? B)) + beta * C
   sum: y = a*x + b*y
   gemv: y = alpha * A * x + y
   mul-rows (diagonal gemm): given a matrix and vector, multiply each row by the
     corresponding element in the vector.  Place result in C.
-  elem-mul: result = elementwise multiply alpha * a * b
+  elem-mul: result = element-wise multiply alpha * a * b
   l2-constraint-scale: create scale vector with either 1.0 or (constraint / row-len)
   select: create a buffer with fixed constants for values >= 0 and values < 0."
   (gemm-impl [stream trans-a? trans-b?
